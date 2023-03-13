@@ -1,8 +1,19 @@
 import React from 'react';
 
-const TodoItemList = (props) => {
+const TodoItemList = ({ todoItemList }) => {
+
     return (
-        <div></div>
+        <div>
+          <ul>
+            {
+              todoItemList.map((item, idx) => {
+                  return (
+                      <li key={idx}>{item.todoItemContent}</li>
+                )   
+             })
+            }
+          </ul>
+        </div>
     )
 }
 

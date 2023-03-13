@@ -3,13 +3,9 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button"
 
 
-const TodoItemInputField = (props) => {
+const TodoItemInputField = ({onSubmit}) => {
     const [input, setInput] = useState("");
-    
-    const onSubmit = () => {
-        props.onSubmit(input);
-        setInput("");
-    }
+
     return (
       <div>
         <TextField
@@ -19,7 +15,7 @@ const TodoItemInputField = (props) => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
         />
-        <Button variant="outlined" onClick={onSubmit}>
+        <Button variant="outlined" onClick={()=>onSubmit(input)}>
           Text
         </Button>
       </div>
