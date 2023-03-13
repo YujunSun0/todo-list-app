@@ -15,7 +15,7 @@ const TodoItemInputField = ({onSubmit}) => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
         />
-        <Button variant="outlined" onClick={()=>onSubmit(input)}>
+        <Button variant="outlined" onClick={()=>onSubmit(input, setInput)}>
           Text
         </Button>
       </div>

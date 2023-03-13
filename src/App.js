@@ -10,13 +10,13 @@ function App() {
 
   console.log(todoItemList);
 
-  const onSubmit = (item) => {
+  const onSubmit = (item, setInput) => {
     setTodoItemList([...todoItemList, {
       id: todoItemId++,
       todoItemContent: item,
       isFinished: false,
     }]);
-   
+    setInput("");
   }
 
   return (
