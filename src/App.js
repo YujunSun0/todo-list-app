@@ -35,7 +35,7 @@ const db = getFirestore(app);
 function App() {
   const [todoItemList, setTodoItemList] = useState([]);
   
-  useEffect(() => {
+  const syncTodoItemListStateWithFirestore = () => {
     getDocs(collection(db, "todoItem")).then((querySnapshot) => {
       const firestoreTodoItemList = [];
       querySnapshot.forEach((doc) => {
@@ -47,48 +47,35 @@ function App() {
       })
       setTodoItemList(firestoreTodoItemList);
     })
-  },[])
+  }
+
+  useEffect(() => {
+    syncTodoItemListStateWithFirestore();
+  }, []);
 
   const onSubmit = async (item, setInput) => { //Create 기능을 하는 함수 (todoItemList에 데이터를 추가하며, 인풋창을 비워준다) 
     // 백엔드에도 사용
-    const docRef = await addDoc(collection(db, "todoItem"), {
+      await addDoc(collection(db, "todoItem"), {
       todoItemContent: item,
       isFinished: false,
     });
-
-    setTodoItemList([...todoItemList, {
-      id: docRef.id,
-      todoItemContent: item,
-      isFinished: false,
-    }]);
+    syncTodoItemListStateWithFirestore();
     setInput("");
   }
+
 
   const onTodoItemClick = async (item) => { // 리스트를 클릭하면 isFinished의 값을 변경시켜주는 함수
     const todoItemRef = doc(db, "todoItem", item.id);
     await setDoc(todoItemRef, { isFinished: !item.isFinished }, { merge: true });
 
-
-    setTodoItemList(todoItemList.map(el => {
-      if (item.id === el.id) {
-        return {
-          id: item.id,
-          todoItemContent: item.todoItemContent,
-          isFinished: !item.isFinished
-        };
-      } else {
-        return el
-      }
-    }))
+    syncTodoItemListStateWithFirestore();
   }
 
   const onRemoveClick = async (item) => {
     const todoItemRef = doc(db, "todoItem", item.id);
     await deleteDoc(todoItemRef);
 
-    setTodoItemList(todoItemList.filter(el => {
-      return el.id !== item.id
-    }))
+    syncTodoItemListStateWithFirestore();
   }
 
   return (
