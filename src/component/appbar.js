@@ -6,13 +6,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from '@mui/icons-material/Menu';
-import {
-  GoogleAuthProvider,
-  getAuth,
-  signInWithRedirect,
-  onAuthStateChanged,
-  signOut,
-} from "firebase/auth";
+import { signInWithRedirect, signOut } from "firebase/auth";
 
 
 const TodoListAppBar = ({auth, provider, currentUser}) => {
@@ -46,6 +40,7 @@ const TodoListAppBar = ({auth, provider, currentUser}) => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Todo List App
           </Typography>
+          <Box sx={{ flexGrow: 1 }} />
           {button}
         </Toolbar>
       </AppBar>

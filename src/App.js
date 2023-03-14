@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import TodoItemInputField from './component/input';
 import TodoItemList from './component/list';
-import TodoListAppBar from './component/appbar';
+import TodoListAppBar from './component/Appbar';
+import Container from '@mui/material/Container';
 
 // SERVER
 
@@ -10,7 +11,7 @@ import TodoListAppBar from './component/appbar';
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore, collection, addDoc, setDoc, doc, deleteDoc, getDocs, query, orderBy, where } from "firebase/firestore"
-import { GoogleAuthProvider, getAuth, signInWithRedirect, onAuthStateChanged, signOut } from "firebase/auth"
+import { GoogleAuthProvider, getAuth, onAuthStateChanged } from "firebase/auth"
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -67,7 +68,7 @@ function App() {
     });
   }
 
-  useEffect(() => { // 첫 렌더링 시, Firestore에서 데이터를 가져와서 표시해줌
+  useEffect(() => { // 첫 렌더링 시, Firestore에서 데이터를 가져와서 표시해줌  currentUser 상태가 변경될 때(로그인, 로그아웃)
     syncTodoItemListStateWithFirestore();
   }, [currentUser]);
 
@@ -99,13 +100,19 @@ function App() {
 
   return (
     <div className="App">
-      <TodoListAppBar provider={provider} auth={auth} currentUser={currentUser} />
-      <TodoItemInputField onSubmit={onSubmit} />
-      <TodoItemList
-        todoItemList={todoItemList}
-        onTodoItemClick={onTodoItemClick}
-        onRemoveClick={onRemoveClick}
+      <TodoListAppBar
+        provider={provider}
+        auth={auth}
+        currentUser={currentUser}
       />
+      <Container sx={{ paddingTop: "20px" }}>
+        <TodoItemInputField onSubmit={onSubmit} />
+        <TodoItemList
+          todoItemList={todoItemList}
+          onTodoItemClick={onTodoItemClick}
+          onRemoveClick={onRemoveClick}
+        />
+      </Container>
     </div>
   );
 }

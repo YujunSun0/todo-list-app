@@ -1,10 +1,12 @@
 import React from 'react';
 import TodoItem from './item';
+import List from "@mui/material/List";
+import Box from "@mui/material/Box";
 
 const TodoItemList = ({ todoItemList, onTodoItemClick, onRemoveClick }) => {
   return (
-    <div>
-      <ul>
+    <Box>
+      <List sx={{margin: "auto", maxWidth: "720px", width: "80%"}}>
         {todoItemList.map((item, idx) => {
           return (
             <TodoItem
@@ -15,8 +17,8 @@ const TodoItemList = ({ todoItemList, onTodoItemClick, onRemoveClick }) => {
             />
           );
         })}
-      </ul>
-    </div>
+      </List>
+    </Box>
   );
 };
 
