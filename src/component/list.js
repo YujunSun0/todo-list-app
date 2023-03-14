@@ -1,7 +1,7 @@
 import React from 'react';
 import TodoItem from './item';
 
-const TodoItemList = ({ todoItemList, onTodoItemClick }) => {
+const TodoItemList = ({ todoItemList, onTodoItemClick, onRemoveClick }) => {
   return (
     <div>
       <ul>
@@ -11,6 +11,7 @@ const TodoItemList = ({ todoItemList, onTodoItemClick }) => {
               key={item.id}
               item={item}
               onTodoItemClick={onTodoItemClick}
+              onRemoveClick={onRemoveClick}
             />
           );
         })}

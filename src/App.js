@@ -31,12 +31,19 @@ function App() {
     }))
   }
 
+  const onRemoveClick = (item) => {
+    setTodoItemList(todoItemList.filter(el => {
+      return el.id !== item.id
+    }))
+  }
+
   return (
     <div className="App">
       <TodoItemInputField onSubmit={onSubmit} />
       <TodoItemList
         todoItemList={todoItemList}
         onTodoItemClick={onTodoItemClick}
+        onRemoveClick={onRemoveClick}
       />
     </div>
   );
