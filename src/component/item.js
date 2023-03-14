@@ -1,4 +1,5 @@
-import Button  from '@mui/material/Button';
+import React from "react";
+import Button from "@mui/material/Button";
 
 const TodoItem = ({ item, onTodoItemClick, onRemoveClick }) => {
   const style = item.isFinished ? { textDecoration: "line-through" } : {};
@@ -14,4 +15,4 @@ const TodoItem = ({ item, onTodoItemClick, onRemoveClick }) => {
   );
 };
 
-export default TodoItem
+export default TodoItem;

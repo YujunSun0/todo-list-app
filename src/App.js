@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import TodoItemInputField from './component/input';
 import TodoItemList from './component/list';
+import TodoListAppBar from './component/appbar';
 
 // SERVER
 
@@ -35,24 +36,25 @@ const db = getFirestore(app);
 function App() {
   const [todoItemList, setTodoItemList] = useState([]);
   
+// Firestore의 "todoItem" 컬렉션에서 Todo 항목의 목록을 가져와서 로컬 상태의 TodoItemList와 동기화하는 함수
   const syncTodoItemListStateWithFirestore = () => {
-    const q = query(collection(db, "todoItem"), orderBy("created", "desc"));
+    const q = query(collection(db, "todoItem"), orderBy("created", "desc")); // 내림차순으로 정렬된 쿼리 생성
 
     getDocs(q).then((querySnapshot) => {
-      const firestoreTodoItemList = [];
-      querySnapshot.forEach((doc) => {
+      const firestoreTodoItemList = []; // Firestore에서 가져온 데이터를 저장하기 위한 배열
+      querySnapshot.forEach((doc) => { // 반환된 각각의 문서(doc)에 대해 반복하며 firestoreTodoItemList 배열에 추가
         firestoreTodoItemList.push({
           id: doc.id,
           todoItemContent: doc.data().todoItemContent,
           isFinished: doc.data().isFinished,
           created: doc.data().created ?? 0,
         });
-      })
-      setTodoItemList(firestoreTodoItemList);
-    })
+      });
+      setTodoItemList(firestoreTodoItemList); // 상태 업데이트
+    });
   }
 
-  useEffect(() => {
+  useEffect(() => { // 첫 렌더링 시, Firestore에서 데이터를 가져와서 표시해줌
     syncTodoItemListStateWithFirestore();
   }, []);
 
@@ -83,6 +85,7 @@ function App() {
 
   return (
     <div className="App">
+      <TodoListAppBar />
       <TodoItemInputField onSubmit={onSubmit} />
       <TodoItemList
         todoItemList={todoItemList}
