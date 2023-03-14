@@ -9,7 +9,7 @@ import TodoListAppBar from './component/appbar';
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getFirestore, collection, addDoc, setDoc, doc, deleteDoc, getDocs, query, orderBy, } from "firebase/firestore"
+import { getFirestore, collection, addDoc, setDoc, doc, deleteDoc, getDocs, query, orderBy, where } from "firebase/firestore"
 import { GoogleAuthProvider, getAuth, signInWithRedirect, onAuthStateChanged, signOut } from "firebase/auth"
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -38,9 +38,9 @@ const auth = getAuth(app);
 
 function App() {
   const [todoItemList, setTodoItemList] = useState([]);
-  const [currentUser, setCurrentUser] = useState(null); // 로그인 되있는 유저가 없으면 null, 있으면 userId
+  const [currentUser, setCurrentUser] = useState(null); // 로그인 되있는지 확인하는 상태
 
-  onAuthStateChanged(auth, (user) => { //user가 로그인상태이면 uid로 상태를 변경 , 없으면 null
+  onAuthStateChanged(auth, (user) => { //user가 로그인상태이면 uid로 상태를 변경 , 없으면 null (firebase에서 기본적으로 제공하는 함수이다)
     if (user) { 
       setCurrentUser(user.uid);
     } else {
@@ -50,7 +50,7 @@ function App() {
   
 // Firestore의 "todoItem" 컬렉션에서 Todo 항목의 목록을 가져와서 로컬 상태의 TodoItemList와 동기화하는 함수
   const syncTodoItemListStateWithFirestore = () => {
-    const q = query(collection(db, "todoItem"), orderBy("created", "desc")); // 내림차순으로 정렬된 쿼리 생성
+    const q = query(collection(db, "todoItem"), where("userId", "==", currentUser) ,orderBy("created", "desc")); // 내림차순으로 정렬된 쿼리 생성
 
     getDocs(q).then((querySnapshot) => {
       const firestoreTodoItemList = []; // Firestore에서 가져온 데이터를 저장하기 위한 배열
@@ -60,6 +60,7 @@ function App() {
           todoItemContent: doc.data().todoItemContent,
           isFinished: doc.data().isFinished,
           created: doc.data().created ?? 0,
+          userId: doc.data().userId
         });
       });
       setTodoItemList(firestoreTodoItemList); // 상태 업데이트
@@ -68,7 +69,7 @@ function App() {
 
   useEffect(() => { // 첫 렌더링 시, Firestore에서 데이터를 가져와서 표시해줌
     syncTodoItemListStateWithFirestore();
-  }, []);
+  }, [currentUser]);
 
   const onSubmit = async (item, setInput) => { //Create 기능을 하는 함수 (todoItemList에 데이터를 추가하며, 인풋창을 비워준다) 
     // 백엔드에도 사용
@@ -76,6 +77,7 @@ function App() {
       todoItemContent: item,
       isFinished: false,
       created: Math.floor(Date.now() / 1000),
+      userId: currentUser
     });
     syncTodoItemListStateWithFirestore();
     setInput("");
