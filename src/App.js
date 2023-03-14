@@ -8,7 +8,7 @@ import TodoItemList from './component/list';
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getFirestore, collection, addDoc, setDoc, doc, deleteDoc, getDocs, QuerySnapshot} from "firebase/firestore"
+import { getFirestore, collection, addDoc, setDoc, doc, deleteDoc, getDocs, querySnapshot, } from "firebase/firestore"
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -43,6 +43,7 @@ function App() {
           id: doc.id,
           todoItemContent: doc.data().todoItemContent,
           isFinished: doc.data().isFinished,
+          created: doc.data().created ?? 0,
         });
       })
       setTodoItemList(firestoreTodoItemList);
@@ -58,11 +59,11 @@ function App() {
       await addDoc(collection(db, "todoItem"), {
       todoItemContent: item,
       isFinished: false,
+      created: Math.floor(Date.now() / 1000),
     });
     syncTodoItemListStateWithFirestore();
     setInput("");
   }
-
 
   const onTodoItemClick = async (item) => { // 리스트를 클릭하면 isFinished의 값을 변경시켜주는 함수
     const todoItemRef = doc(db, "todoItem", item.id);
