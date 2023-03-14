@@ -10,6 +10,7 @@ import TodoListAppBar from './component/appbar';
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore, collection, addDoc, setDoc, doc, deleteDoc, getDocs, query, orderBy, } from "firebase/firestore"
+import { GoogleAuthProvider, getAuth, signInWithRedirect, onAuthStateChanged, signOut } from "firebase/auth"
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -29,12 +30,23 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
 
+const provider = new GoogleAuthProvider();
+const auth = getAuth(app);
 // CLIENT
 
 // let todoItemId = 0;  firebase를 사용하여 필요없어진 코드
 
 function App() {
   const [todoItemList, setTodoItemList] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null); // 로그인 되있는 유저가 없으면 null, 있으면 userId
+
+  onAuthStateChanged(auth, (user) => { //user가 로그인상태이면 uid로 상태를 변경 , 없으면 null
+    if (user) { 
+      setCurrentUser(user.uid);
+    } else {
+      setCurrentUser(null);
+    }
+  });
   
 // Firestore의 "todoItem" 컬렉션에서 Todo 항목의 목록을 가져와서 로컬 상태의 TodoItemList와 동기화하는 함수
   const syncTodoItemListStateWithFirestore = () => {
@@ -85,7 +97,7 @@ function App() {
 
   return (
     <div className="App">
-      <TodoListAppBar />
+      <TodoListAppBar provider={provider} auth={auth} currentUser={currentUser} />
       <TodoItemInputField onSubmit={onSubmit} />
       <TodoItemList
         todoItemList={todoItemList}
